@@ -4,11 +4,39 @@ import os
 import discord
 import requests
 import time
-from html2image import Html2Image
+from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
 from dotenv import load_dotenv
 from discord.ext import commands
+
+def get_rune_tree_name(title):
+	if "Sorcery" in title:
+		return "Sorcery"
+	if "Domination" in title:
+		return "Domination"
+	if "Precision" in title:
+		return "Precision"
+	if "Resolve" in title:
+		return "Resolve"
+	if "Inspiration" in title:
+		return "Inspiration"
+	return "None"
+
+def get_stat_buff_name(title):
+	if "Adaptive" in title:
+		return "Adaptive"
+	if "Attack Speed" in title:
+		return "Attack Speed"
+	if "Ability Haste" in title:
+		return "Ability Haste"
+	if "Armor" in title:
+		return "Armor"
+	if "Magic Resist" in title:
+		return "Magic Resist"
+	if "Health" in title:
+		return "Health"
+	return "None"
 
 def main():
 	load_dotenv()
@@ -73,24 +101,32 @@ def main():
 			return
 		last_build_call = t
 
-		url = f"https://u.gg/lol/champions/aram/{champion}"
-		sr_url = f"https://u.gg/lol/champions/{champion}/build"
 		if queue_type.lower() in ['sr', 'norms', 'normals', 'norm', 'normal', 'summonersrift', 'summoners-rift']:
-			url = sr_url
+			await ctx.send("This queue type is not supported yet")
+			return
 		elif queue_type.lower() != "aram":
 			await ctx.send(f"Queue type invalid: {queue_type}")
 			return
 
+		url = f"https://www.op.gg/aram/{champion}/statistics/450/rune"
+		headers = {'User-Agent': 'Mozilla/5.0'}
+		response = requests.get(url=url, headers=headers)
+		soup = BeautifulSoup(response.text, 'html.parser')
+
+		runes = soup.find_all("div", class_=lambda value: value and value.endswith("--active"))
+		rune_titles = soup.find_all("div", class_="perk-page")
+		if len(rune_titles) == 0:
+			await ctx.send(f"Champion not found: {champion}")
+			return
 		await ctx.send(url)
-
-		#chrome = "/bin/"
-		#hti = Html2Image(browser_executable=chrome, custom_flags=['--virtual-time-budget=0', '--enable-heavy-ad-intervention'])
-		#with BytesIO() as output:
-		#	hti.screenshot(url=url, save_as=output)
-		#	contents = output.getvalue()
-		#	picture = discord.File(contents, f"{champion}-{queue_type}-build.png")
-		#	await ctx.send(file=picture)
-
+		primary_title = get_rune_tree_name(rune_titles[0].div.div.img['title'])
+		secondary_title = get_rune_tree_name(rune_titles[1].div.div.img['title'])
+		primary_runes = [runes[i].div.img['alt'] for i in range(4)]
+		secondary_runes = [runes[i].div.img['alt'] for i in range(4,6)]
+		stat_buffs = list(map(get_stat_buff_name, map(lambda tag: tag['title'], soup.find("div", class_="fragment-page").find_all("img", class_=lambda value: value and value.startswith("active")))))
+		
+		rune_str = f"{primary_title}: {' > '.join(primary_runes)}\n{secondary_title}: {' > '.join(secondary_runes)}\nBonus Stats: {' > '.join(stat_buffs)}"
+		await ctx.send(rune_str)
 
 	bot.run(TOKEN)
 

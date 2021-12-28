@@ -3,6 +3,7 @@
 This bot is meant to invoke Riot APIs from discord to query useful information regarding our favorite League of Legends gamemode: ARAM. This bot should be able to query for MMR (provided by the na.whatismymmr.com API) as well as optimal ARAM builds for every champion (including runes, summoner spells, items, and ability level up order).
 
 The supported commands will be:
+
 !help
 - returns helpful information about supported bot commands
 
