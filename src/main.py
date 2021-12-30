@@ -46,7 +46,9 @@ def main():
 	load_dotenv()
 	TOKEN = os.getenv('DISCORD_TOKEN')
 	GUILD_NAME = os.getenv('DISCORD_GUILD')
-	TEST_GUILD_ID = int(os.getenv('TEST_GUILD_ID'))
+	TEST_GUILD_ID = None
+	if TEST_MODE:
+		TEST_GUILD_ID = int(os.getenv('TEST_GUILD_ID'))
 
 	bot = commands.Bot(command_prefix='!')
 	GUILD = None
