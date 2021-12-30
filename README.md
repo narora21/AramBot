@@ -13,6 +13,6 @@ The supported commands will be:
 !winrate {summoner-name} (Not yet implemented)
 - returns the Aram win rate of the summoner
 
-!build {champion} (Partially implemented)
+!build {champion} {queue-type} (Partially implemented)
 - returns the recommended ARAM build of the champion
 

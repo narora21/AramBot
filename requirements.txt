@@ -1,0 +1,5 @@
+python3
+dotenv
+discord.py
+beautifulsoup4
+PIL
