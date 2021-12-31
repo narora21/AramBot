@@ -179,7 +179,8 @@ def main():
 		skill_name3 = get_skill_key(skill3)
 		skill_str = f"Skill Level Up: {skill_name1} > {skill_name2} > {skill_name3}"
 
-		build_str = f"Recommended build for {champion}:\n {rune_str}\n\n{spell_str}\n\n{skill_str}"
+		champ_name = champion[0].upper() + champion[1:].lower()
+		build_str = f"Recommended build for {champ_name}:\n {rune_str}\n\n{spell_str}\n\n{skill_str}"
 		await ctx.send(build_str)
 
 	bot.run(TOKEN)
