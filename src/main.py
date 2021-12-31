@@ -42,6 +42,20 @@ def get_stat_buff_name(title):
 		return "Health"
 	return "None"
 
+def get_summoner_spell(spell):
+	summoner_spells = ["heal", "ghost", "barrier", "exhaust", "mark", "clarity", "flash", "teleport", "smite", "cleanse", "ignite"]
+	name = spell.img["src"][53:]
+	return name.split(".")[0]
+
+def get_skill_key(skill):
+	return skill.span.text
+
+def get_all_skills(spells_and_skills):
+	first_skill = 2
+	while spells_and_skills[first_skill].find("img", class_="tip") and first_skill < len(spells_and_skills):
+		first_skill += 1
+	return spells_and_skills[first_skill], spells_and_skills[first_skill+1], spells_and_skills[first_skill+2]
+
 def main():
 	load_dotenv()
 	TOKEN = os.getenv('DISCORD_TOKEN')
@@ -106,7 +120,7 @@ def main():
 		ranked_info = f"Ranked Solo:\tmmr: {ranked_mmr}, rank: {ranked_rank}, percentile: {ranked_perc}"
 		norm_info = f"Normals:\tmmr: {norm_mmr}, rank: {norm_rank}, percentile: {norm_perc}"
 		disclaimer = "None entries indicate there are not enough games played in the last 30 days"
-		await ctx.send(f"{aram_info}\n{ranked_info}\n{norm_info}\n{disclaimer}")
+		await ctx.send(f"Data for {summoner}:\n{aram_info}\n{ranked_info}\n{norm_info}\n{disclaimer}")
 
 	@bot.command(name="build", help="Get op.gg recommended ARAM builds")
 	async def build(ctx, champion, queue_type="aram"):
@@ -134,7 +148,7 @@ def main():
 			logging.info(f"Error: Queue type invalid: {queue_type}")
 			return
 
-		url = f"https://www.op.gg/aram/{champion}/statistics/450/rune"
+		url = f"https://www.op.gg/aram/{champion}/statistics/450/build"
 		headers = {'User-Agent': 'Mozilla/5.0'}
 		response = requests.get(url=url, headers=headers)
 		soup = BeautifulSoup(response.text, 'html.parser')
@@ -151,9 +165,22 @@ def main():
 		primary_runes = [runes[i].div.img['alt'] for i in range(4)]
 		secondary_runes = [runes[i].div.img['alt'] for i in range(4,6)]
 		stat_buffs = list(map(get_stat_buff_name, map(lambda tag: tag['title'], soup.find("div", class_="fragment-page").find_all("img", class_=lambda value: value and value.startswith("active")))))
+		rune_str = f"Runes:\n{primary_title}: {' > '.join(primary_runes)}\n{secondary_title}: {' > '.join(secondary_runes)}\nBonus Stats: {' > '.join(stat_buffs)}"
 		
-		rune_str = f"{primary_title}: {' > '.join(primary_runes)}\n{secondary_title}: {' > '.join(secondary_runes)}\nBonus Stats: {' > '.join(stat_buffs)}"
-		await ctx.send(rune_str)
+		spells_and_skills = soup.find_all("li", class_="champion-stats__list__item")
+		spell1, spell2 = spells_and_skills[:2]
+		spell_name1 = get_summoner_spell(spell1)
+		spell_name2 = get_summoner_spell(spell2)
+		spell_str = f"Summoner Spells: {spell_name1}, {spell_name2}"
+
+		skill1, skill2, skill3 = get_all_skills(spells_and_skills)
+		skill_name1 = get_skill_key(skill1)
+		skill_name2 = get_skill_key(skill2)
+		skill_name3 = get_skill_key(skill3)
+		skill_str = f"Skill Level Up: {skill_name1} > {skill_name2} > {skill_name3}"
+
+		build_str = f"Recommended build for {champion}:\n {rune_str}\n\n{spell_str}\n\n{skill_str}"
+		await ctx.send(build_str)
 
 	bot.run(TOKEN)
 
