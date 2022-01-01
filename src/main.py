@@ -248,7 +248,7 @@ def main():
 
 
 if __name__ == "__main__":
-	logging.basicConfig(filename='arambot.log', level=logging.DEBUG)
+	logging.basicConfig(filename='logs/arambot.log', level=logging.DEBUG)
 	if len(sys.argv) == 2 and sys.argv[1] == "test":
 		print("Running in test mode")
 		logging.info(f"Running in test mode")
