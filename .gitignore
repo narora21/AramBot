@@ -3,3 +3,4 @@ git_auth.txt
 *.html
 *.log
 scrape.py
+img
