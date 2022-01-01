@@ -201,11 +201,11 @@ def main():
 		norm_rank = data['normal']['closestRank']
 		norm_perc = data['normal']['percentile']
 
-		aram_info = f"ARAM:\tmmr: {aram_mmr}, rank: {aram_rank}, percentile: {aram_perc}"
-		ranked_info = f"Ranked Solo:\tmmr: {ranked_mmr}, rank: {ranked_rank}, percentile: {ranked_perc}"
-		norm_info = f"Normals:\tmmr: {norm_mmr}, rank: {norm_rank}, percentile: {norm_perc}"
+		aram_info = f"(ARAM) mmr: {aram_mmr}, rank: {aram_rank}, percentile: {aram_perc}"
+		ranked_info = f"(Ranked Solo) mmr: {ranked_mmr}, rank: {ranked_rank}, percentile: {ranked_perc}"
+		norm_info = f"(Normals) mmr: {norm_mmr}, rank: {norm_rank}, percentile: {norm_perc}"
 		disclaimer = "None entries indicate there are not enough games played in the last 30 days"
-		await ctx.send(f"Data for {summoner}:\n{aram_info}\n{ranked_info}\n{norm_info}\n{disclaimer}")
+		await ctx.send(f"```Data for {summoner}:\n{aram_info}\n{ranked_info}\n{norm_info}\n{disclaimer}```")
 
 	@bot.command(name="build", help="Get op.gg recommended ARAM builds")
 	async def build(ctx, champion, queue_type="aram"):
