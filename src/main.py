@@ -14,6 +14,10 @@ from discord.ext import commands
 
 TEST_MODE = False
 
+def log_msg(msg):
+	print(msg)
+	logging.info(msg)
+
 def get_rune_tree_name(title):
 	if "Sorcery" in title:
 		return "Sorcery"
@@ -44,8 +48,9 @@ def get_stat_buff_name(title):
 
 def get_summoner_spell(spell):
 	summoner_spells = ["heal", "ghost", "barrier", "exhaust", "mark", "clarity", "flash", "teleport", "smite", "cleanse", "ignite"]
-	name = spell.img["src"][53:]
-	return name.split(".")[0]
+	title = BeautifulSoup(spell.img['title'], 'html.parser')
+	name = title.b.text
+	return name
 
 def get_skill_key(skill):
 	return skill.span.text
@@ -55,6 +60,89 @@ def get_all_skills(spells_and_skills):
 	while spells_and_skills[first_skill].find("img", class_="tip") and first_skill < len(spells_and_skills):
 		first_skill += 1
 	return spells_and_skills[first_skill], spells_and_skills[first_skill+1], spells_and_skills[first_skill+2]
+
+def scrape_runes(soup):
+	runes = soup.find_all("div", class_=lambda value: value and value.endswith("--active"))
+	rune_titles = soup.find_all("div", class_="perk-page")
+	primary_title = get_rune_tree_name(rune_titles[0].div.div.img['title'])
+	secondary_title = get_rune_tree_name(rune_titles[1].div.div.img['title'])
+	primary_runes = [runes[i].div.img['alt'] for i in range(4)]
+	secondary_runes = [runes[i].div.img['alt'] for i in range(4,6)]
+	stat_buffs = list(map(get_stat_buff_name, map(lambda tag: tag['title'], soup.find("div", class_="fragment-page").find_all("img", class_=lambda value: value and value.startswith("active")))))
+	return primary_title, primary_runes, secondary_title, secondary_runes, stat_buffs
+
+def scrape_spells(soup):
+	spells_and_skills = soup.find_all("li", class_="champion-stats__list__item")
+	spell1, spell2 = spells_and_skills[:2]
+	spell_name1 = get_summoner_spell(spell1)
+	spell_name2 = get_summoner_spell(spell2)
+	return spell_name1, spell_name2
+
+def scrape_skills(soup):
+	spells_and_skills = soup.find_all("li", class_="champion-stats__list__item")
+	skill1, skill2, skill3 = get_all_skills(spells_and_skills)
+	skill_name1 = get_skill_key(skill1)
+	skill_name2 = get_skill_key(skill2)
+	skill_name3 = get_skill_key(skill3)
+	return skill_name1, skill_name2, skill_name3
+
+def scrape_items(soup):
+	items_table = soup.find_all("tbody")[3]
+	row = items_table.find('tr')
+	starter_items = []
+	core_items = []
+	boot_items = []
+	header = ""
+	while row is not None:
+		if row.find("th") is not None:
+			header = row.th.text.lower().strip()
+		items = row.find_all("li", class_="champion-stats__list__item tip")
+		item_row = []
+		for item in items:
+			item_row.append(BeautifulSoup(item['title'], 'html.parser').b.text)
+		if header == "starter items":
+			starter_items.append(item_row)
+		elif header == "recommended build":
+			core_items.append(item_row)
+		elif header == "boots":
+			boot_items.append(item_row)
+		row = row.find_next_sibling("tr")
+	return starter_items, core_items, boot_items
+
+def build_runes_str(soup):
+	primary_title, primary_runes, secondary_title, secondary_runes, stat_buffs = scrape_runes(soup)
+	prim_str = f"({primary_title}) {' + '.join(primary_runes)}"
+	sec_str = f"({secondary_title}) {' + '.join(secondary_runes)}"
+	bonus_str = f"(Bonus Stats) {' + '.join(stat_buffs)}"
+	rune_str = f"{prim_str}\n{sec_str}\n{bonus_str}"
+	return rune_str
+
+def build_spells_str(soup):
+	spell_name1, spell_name2 = scrape_spells(soup)
+	spell_str = f"{spell_name1}, {spell_name2}"
+	return spell_str
+
+def build_skills_str(soup):
+	skill_name1, skill_name2, skill_name3 = scrape_skills(soup)
+	skill_str = f"{skill_name1} > {skill_name2} > {skill_name3}"
+	return skill_str
+
+def build_items_str(soup):
+	starter_items, core_items, boot_items = scrape_items(soup)
+	start_str = f"(Starter Items) {' > '.join(starter_items[0])}"
+	core_str = f"(Core Items) {' > '.join(core_items[0])}"
+	boot_str = f"(Boots) {' > '.join(boot_items[0])}"
+	items_str = f"{start_str}\n{core_str}\n{boot_str}"
+	return items_str
+
+def build_return_str(champ_name, soup):
+	header_str = f"Recommended build for {champ_name}:"
+	rune_str = f"Runes:\n{build_runes_str(soup)}"
+	item_str = f"Items:\n{build_items_str(soup)}"
+	spell_str = f"Summoner Spells: {build_spells_str(soup)}"
+	skill_str = f"Skill Level Up: {build_skills_str(soup)}"
+	return f"```{header_str}\n{rune_str}\n\n{item_str}\n\n{spell_str}\n\n{skill_str}```"
+	
 
 def main():
 	load_dotenv()
@@ -76,25 +164,22 @@ def main():
 			GUILD = discord.utils.find(lambda g: g.id == TEST_GUILD_ID, bot.guilds)
 		else:
 			GUILD = discord.utils.find(lambda g: g.name == GUILD_NAME, bot.guilds)
-		print("{0} is connected to server {1} (id:{2})".format(bot.user, GUILD.name, GUILD.id))
-		logging.info("{0} is connected to server {1} (id:{2})".format(bot.user, GUILD.name, GUILD.id))
+		log_msg("{0} is connected to server {1} (id:{2})".format(bot.user, GUILD.name, GUILD.id))
 		print("Command history:")
 
 	@bot.command(name="mmr", help="Get your ARAM, Ranked Solo, and Normal mmr")
 	async def mmr(ctx, *summoner_name):
 		if TEST_MODE and ctx.guild.id != TEST_GUILD_ID:
-			print(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
-			logging.info(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
+			log_msg(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
 			return
 		summoner = " ".join(summoner_name)
-		print(f"{ctx.author} sent \"!mmr {summoner}\" in {ctx.guild}")
-		logging.info(f"{ctx.author} sent \"!mmr {summoner}\" in {ctx.guild}")
+		log_msg(f"{ctx.author} sent \"!mmr {summoner}\" in {ctx.guild}")
 		# rate: 60 requests per minute
 		nonlocal last_mmr_call
 		t = time.time()
 		if t - last_mmr_call < 1:
 			await ctx.send("Error: Please limit requests to 1 per second")
-			logging.info("Error: Please limit requests to 1 per second")
+			log_msg("Error: Please limit requests to 1 per second")
 			return
 		last_mmr_call = t
 
@@ -125,63 +210,39 @@ def main():
 	@bot.command(name="build", help="Get op.gg recommended ARAM builds")
 	async def build(ctx, champion, queue_type="aram"):
 		if TEST_MODE and ctx.guild.id != TEST_GUILD_ID:
-			print(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
-			logging.info(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
+			log_msg(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
 			return
-		print(f"{ctx.author} sent \"!build {champion} {queue_type}\" in {ctx.guild}")
-		logging.info(f"{ctx.author} sent \"!build {champion} {queue_type}\" in {ctx.guild}")
+		log_msg(f"{ctx.author} sent \"!build {champion} {queue_type}\" in {ctx.guild}")
 		# rate: 60 requests per minute
 		nonlocal last_build_call
 		t = time.time()
 		if t - last_build_call < 1:
 			await ctx.send("Error: Please limit requests to 1 per second")
-			logging.info("Error: Please limit requests to 1 per second")
+			log_msg("Error: Please limit requests to 1 per second")
 			return
 		last_build_call = t
 
 		if queue_type.lower() in ['sr', 'norms', 'normals', 'norm', 'normal', 'summonersrift', 'summoners-rift']:
 			await ctx.send("Error: This queue type is not supported yet")
-			logging.info("Error: This queue type is not supported yet")
+			log_msg("Error: This queue type is not supported yet")
 			return
 		elif queue_type.lower() != "aram":
 			await ctx.send(f"Error: Queue type invalid: {queue_type}")
-			logging.info(f"Error: Queue type invalid: {queue_type}")
+			log_msg(f"Error: Queue type invalid: {queue_type}")
 			return
 
 		url = f"https://www.op.gg/aram/{champion}/statistics/450/build"
 		headers = {'User-Agent': 'Mozilla/5.0'}
 		response = requests.get(url=url, headers=headers)
 		soup = BeautifulSoup(response.text, 'html.parser')
-
-		runes = soup.find_all("div", class_=lambda value: value and value.endswith("--active"))
-		rune_titles = soup.find_all("div", class_="perk-page")
-		if len(rune_titles) == 0:
+		if len(soup.find_all("div", class_="perk-page")) == 0:
 			await ctx.send(f"Error: Champion not found: {champion}")
-			logging.info(f"Error: Champion not found: {champion}")
+			log_msg(f"Error: Champion not found: {champion}")
 			return
 		await ctx.send(url)
-		primary_title = get_rune_tree_name(rune_titles[0].div.div.img['title'])
-		secondary_title = get_rune_tree_name(rune_titles[1].div.div.img['title'])
-		primary_runes = [runes[i].div.img['alt'] for i in range(4)]
-		secondary_runes = [runes[i].div.img['alt'] for i in range(4,6)]
-		stat_buffs = list(map(get_stat_buff_name, map(lambda tag: tag['title'], soup.find("div", class_="fragment-page").find_all("img", class_=lambda value: value and value.startswith("active")))))
-		rune_str = f"Runes:\n{primary_title}: {' > '.join(primary_runes)}\n{secondary_title}: {' > '.join(secondary_runes)}\nBonus Stats: {' > '.join(stat_buffs)}"
-		
-		spells_and_skills = soup.find_all("li", class_="champion-stats__list__item")
-		spell1, spell2 = spells_and_skills[:2]
-		spell_name1 = get_summoner_spell(spell1)
-		spell_name2 = get_summoner_spell(spell2)
-		spell_str = f"Summoner Spells: {spell_name1}, {spell_name2}"
-
-		skill1, skill2, skill3 = get_all_skills(spells_and_skills)
-		skill_name1 = get_skill_key(skill1)
-		skill_name2 = get_skill_key(skill2)
-		skill_name3 = get_skill_key(skill3)
-		skill_str = f"Skill Level Up: {skill_name1} > {skill_name2} > {skill_name3}"
 
 		champ_name = champion[0].upper() + champion[1:].lower()
-		build_str = f"Recommended build for {champ_name}:\n {rune_str}\n\n{spell_str}\n\n{skill_str}"
-		await ctx.send(build_str)
+		await ctx.send(build_return_str(champ_name, soup))
 
 	bot.run(TOKEN)
 
