@@ -6,6 +6,7 @@ import discord
 import requests
 import time
 import logging
+from logging.handlers import TimedRotatingFileHandler
 from bs4 import BeautifulSoup
 from PIL import Image
 from io import BytesIO
@@ -13,10 +14,15 @@ from dotenv import load_dotenv
 from discord.ext import commands
 
 TEST_MODE = False
+LOGGER = None
 
 def log_msg(msg):
+	global LOGGER
 	print(msg)
-	logging.info(msg)
+	LOGGER.info(msg)
+
+def load_champs():
+	return
 
 def get_rune_tree_name(title):
 	if "Sorcery" in title:
@@ -160,10 +166,21 @@ def main():
 	@bot.event
 	async def on_ready():
 		nonlocal GUILD
+		global LOGGER
 		if TEST_MODE:
 			GUILD = discord.utils.find(lambda g: g.id == TEST_GUILD_ID, bot.guilds)
 		else:
 			GUILD = discord.utils.find(lambda g: g.name == GUILD_NAME, bot.guilds)
+		LOGGER = logging.getLogger(__name__)
+		if not os.path.exists(f'logs/{GUILD_NAME}'):
+			os.makedirs(f'logs/{GUILD_NAME}')
+		handler = TimedRotatingFileHandler(filename=f'logs/{GUILD_NAME}/runtime.log', when='D', interval=1, backupCount=90, encoding='utf-8', delay=False)
+		formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+		handler.setFormatter(formatter)
+		LOGGER.addHandler(handler)
+		LOGGER.setLevel(logging.INFO)
+		if TEST_MODE:
+			log_msg(f"Running in test mode")
 		log_msg("{0} is connected to server {1} (id:{2})".format(bot.user, GUILD.name, GUILD.id))
 		print("Command history:")
 
@@ -239,7 +256,7 @@ def main():
 			await ctx.send(f"Error: Champion not found: {champion}")
 			log_msg(f"Error: Champion not found: {champion}")
 			return
-		await ctx.send(url)
+		#await ctx.send(url)
 
 		champ_name = champion[0].upper() + champion[1:].lower()
 		await ctx.send(build_return_str(champ_name, soup))
@@ -248,9 +265,7 @@ def main():
 
 
 if __name__ == "__main__":
-	logging.basicConfig(filename='logs/arambot.log', level=logging.DEBUG)
 	if len(sys.argv) == 2 and sys.argv[1] == "test":
 		print("Running in test mode")
-		logging.info(f"Running in test mode")
 		TEST_MODE = True
 	main()

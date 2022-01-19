@@ -2,4 +2,5 @@ git_auth.txt
 .env
 *.html
 *.log
+img
 scrape.py
