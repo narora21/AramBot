@@ -135,9 +135,9 @@ def build_skills_str(soup):
 
 def build_items_str(soup):
 	starter_items, core_items, boot_items = scrape_items(soup)
-	start_str = f"(Starter Items) {' > '.join(starter_items[0])}"
-	core_str = f"(Core Items) {' > '.join(core_items[0])}"
-	boot_str = f"(Boots) {' > '.join(boot_items[0])}"
+	start_str = f"(Starter Items) {(' > '.join(starter_items[0])) if len(starter_items) > 0 else ''}"
+	core_str = f"(Core Items) {(' > '.join(core_items[0])) if len(core_items) > 0 else ''}"
+	boot_str = f"(Boots) {(' > '.join(boot_items[0])) if len(boot_items) > 0 else ''}"
 	items_str = f"{start_str}\n{core_str}\n{boot_str}"
 	return items_str
 
