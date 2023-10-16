@@ -1,142 +1,94 @@
 # ARAM Bot Written by Nikhil Arora
 # 12/26/2021
-import os
-import sys
 import discord
-import requests
-import time
 import logging
+import os
+from pathlib import Path
 from logging.handlers import TimedRotatingFileHandler
-from bs4 import BeautifulSoup
-from PIL import Image
-from io import BytesIO
-from dotenv import load_dotenv
+from dotenv import dotenv_values
 from discord.ext import commands
 
-TEST_MODE = False
-LOGGER = None
+from commands.query import QueryCommand
+from constants import OPEN_AI_KEY, WEAVIATE_API_KEY, WEAVIATE_CLUSTER_URL, \
+    DISCORD_TOKEN, DISCORD_GUILD_ID, TEST_GUILD_ID, TEST_MODE
 
-def log_msg(msg):
-    global LOGGER
-    print(msg)
-    LOGGER.info(msg)	
+VERSION = '2.0.0'
 
-def main():
-    load_dotenv()
-    TOKEN = os.getenv('DISCORD_TOKEN')
-    GUILD_NAME = os.getenv('DISCORD_GUILD')
-    TEST_GUILD_ID = None
-    if TEST_MODE:
-        TEST_GUILD_ID = int(os.getenv('TEST_GUILD_ID'))
+class AramBot:
 
-    bot = commands.Bot(command_prefix='!')
-    GUILD = None
-    last_mmr_call = time.time()
-    last_build_call = time.time()
+    def __init__(self, config, version):
+        self.bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
+        self.test_mode = config[TEST_MODE] == '1'
+        self.open_ai_key = config[OPEN_AI_KEY]
+        self.weaviate_api_key = config[WEAVIATE_API_KEY]
+        self.weaviate_cluser_url = config[WEAVIATE_CLUSTER_URL]
+        self.discord_token = config[DISCORD_TOKEN]
+        self.test_guild_id = int(config[TEST_GUILD_ID])
+        self.discord_guild_id = int(config[TEST_GUILD_ID]) if self.test_mode else int(config[DISCORD_GUILD_ID])
+        self.logger = logging.getLogger(__name__)
+        self.version = version
+        self._init_commands(version)
 
-    @bot.event
-    async def on_ready():
-        nonlocal GUILD
-        global LOGGER
-        if TEST_MODE:
-            GUILD = discord.utils.find(lambda g: g.id == TEST_GUILD_ID, bot.guilds)
-        else:
-            GUILD = discord.utils.find(lambda g: g.name == GUILD_NAME, bot.guilds)
-        LOGGER = logging.getLogger(__name__)
-        if not os.path.exists(f'logs/{GUILD_NAME}'):
-            os.makedirs(f'logs/{GUILD_NAME}')
-        handler = TimedRotatingFileHandler(filename=f'logs/{GUILD_NAME}/runtime.log', when='D', interval=1, backupCount=90, encoding='utf-8', delay=False)
-        formatter = logging.Formatter(fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
+    def _init_commands(self, version):
+        self.query_command = QueryCommand(
+            self.logger, 
+            self.test_mode, 
+            self.test_guild_id, 
+            version,
+            self.open_ai_key,
+            self.weaviate_api_key,
+            self.weaviate_cluser_url
+        )
+
+    def _create_log_file(self, guild_name):
+        """Creates a log file in /logs/<guild_name>/runtime.log
+        Returns this path if succesful
+        """
+        log_path = os.path.join('logs', self.guild.name)
+        Path(log_path).mkdir(parents=True, exist_ok=True)
+        log_filepath = os.path.join('logs', self.guild.name, 'runtime.log')        
+        if not os.path.isfile(log_filepath):
+            open(os.path.join(os.getcwd(), log_filepath), 'x').close()
+        return log_filepath
+
+    def _on_ready(self):
+        self.guild = discord.utils.find(lambda g: g.id == self.discord_guild_id, self.bot.guilds)
+        log_filepath = self._create_log_file(self.guild.name)
+        handler = TimedRotatingFileHandler(
+            filename=log_filepath, 
+            when='D', 
+            interval=1, 
+            backupCount=90, 
+            encoding='utf-8', 
+            delay=False
+        )
+        formatter = logging.Formatter(
+            fmt='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
         handler.setFormatter(formatter)
-        LOGGER.addHandler(handler)
-        LOGGER.setLevel(logging.INFO)
-        if TEST_MODE:
-            log_msg(f"Running in test mode")
-        log_msg("{0} is connected to server {1} (id:{2})".format(bot.user, GUILD.name, GUILD.id))
-        print("Command history:")
+        self.logger.addHandler(handler)
+        self.logger.setLevel(logging.INFO)
+        if self.test_mode:
+            print('Running in Test Mode')
+            self.logger.info("Running in Test Mode")
+        print('Server started...')
+        self.logger.info("{0} is connected to server {1} (id:{2})".format(
+                self.bot.user, self.guild.name, self.guild.id
+            )
+        )
 
-    @bot.command(name="mmr", help="Get your ARAM, Ranked Solo, and Normal mmr")
-    async def mmr(ctx, *summoner_name):
-        if TEST_MODE and ctx.guild.id != TEST_GUILD_ID:
-            log_msg(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
-            return
-        summoner = " ".join(summoner_name)
-        log_msg(f"{ctx.author} sent \"!mmr {summoner}\" in {ctx.guild}")
-        # rate: 60 requests per minute
-        nonlocal last_mmr_call
-        t = time.time()
-        if t - last_mmr_call < 1:
-            await ctx.send("Error: Please limit requests to 1 per second")
-            log_msg("Error: Please limit requests to 1 per second")
-            return
-        last_mmr_call = t
+    def run(self):
+        @self.bot.event
+        async def on_ready():
+            self._on_ready()
 
-        response = requests.get(url=f"https://na.whatismymmr.com/api/v1/summoner?name={summoner}")
-        data = response.json()
-        if 'error' in data:
-            await ctx.send(data['error']['message'])
-            return
+        @self.bot.command(name="query", help="Ask AramBot any question you like!")
+        async def query(ctx, *args):
+            await self.query_command.execute(ctx, args)
 
-        aram_mmr = data['ARAM']['avg']
-        aram_rank = data['ARAM']['closestRank']
-        aram_perc = data['ARAM']['percentile']
-
-        ranked_mmr = data['ranked']['avg']
-        ranked_rank = data['ranked']['closestRank']
-        ranked_perc = data['ranked']['percentile']
-
-        norm_mmr = data['normal']['avg']
-        norm_rank = data['normal']['closestRank']
-        norm_perc = data['normal']['percentile']
-
-        aram_info = f"(ARAM) mmr: {aram_mmr}, rank: {aram_rank}, percentile: {aram_perc}"
-        ranked_info = f"(Ranked Solo) mmr: {ranked_mmr}, rank: {ranked_rank}, percentile: {ranked_perc}"
-        norm_info = f"(Normals) mmr: {norm_mmr}, rank: {norm_rank}, percentile: {norm_perc}"
-        disclaimer = "None entries indicate there are not enough games played in the last 30 days"
-        await ctx.send(f"```Data for {summoner}:\n{aram_info}\n{ranked_info}\n{norm_info}\n{disclaimer}```")
-
-    @bot.command(name="build", help="Get op.gg recommended ARAM builds")
-    async def build(ctx, champion, queue_type="aram"):
-        if TEST_MODE and ctx.guild.id != TEST_GUILD_ID:
-            log_msg(f"Ignored command from non-test server: {ctx.guild.name} (id: {ctx.guild.id})")
-            return
-        log_msg(f"{ctx.author} sent \"!build {champion} {queue_type}\" in {ctx.guild}")
-        # rate: 60 requests per minute
-        nonlocal last_build_call
-        t = time.time()
-        if t - last_build_call < 1:
-            await ctx.send("Error: Please limit requests to 1 per second")
-            log_msg("Error: Please limit requests to 1 per second")
-            return
-        last_build_call = t
-
-        if queue_type.lower() in ['sr', 'norms', 'normals', 'norm', 'normal', 'summonersrift', 'summoners-rift']:
-            await ctx.send("Error: This queue type is not supported yet")
-            log_msg("Error: This queue type is not supported yet")
-            return
-        elif queue_type.lower() != "aram":
-            await ctx.send(f"Error: Queue type invalid: {queue_type}")
-            log_msg(f"Error: Queue type invalid: {queue_type}")
-            return
-
-        url = f"https://www.op.gg/aram/{champion}/statistics/450/build"
-        headers = {'User-Agent': 'Mozilla/5.0'}
-        response = requests.get(url=url, headers=headers)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        if len(soup.find_all("div", class_="perk-page")) == 0:
-            await ctx.send(f"Error: Champion not found: {champion}")
-            log_msg(f"Error: Champion not found: {champion}")
-            return
-        #await ctx.send(url)
-
-        champ_name = champion[0].upper() + champion[1:].lower()
-        await ctx.send(build_return_str(champ_name, soup))
-
-    bot.run(TOKEN)
+        self.bot.run(self.discord_token)
 
 
 if __name__ == "__main__":
-    if len(sys.argv) == 2 and sys.argv[1] == "test":
-        print("Running in test mode")
-        TEST_MODE = True
-    main()
+    config = dotenv_values('.env')
+    AramBot(config, VERSION).run()
