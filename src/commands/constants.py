@@ -1,0 +1,11 @@
+# whitelist file keys
+USERNAME='username'
+PERMISSIONS='permissions'
+COMMANDS='commands'
+ALLOW='allow'
+DENY='deny'
+COMMAND='command'
+LEVEL='level'
+ALL_LEVEL='all'
+LIMITED_LEVEL='limited'
+NONE_LEVEL='none'

@@ -8,6 +8,7 @@ from logging.handlers import TimedRotatingFileHandler
 from dotenv import dotenv_values
 from discord.ext import commands
 
+from commands.whitelist import WhitelistCommand
 from commands.query import QueryCommand
 from constants import OPEN_AI_KEY, WEAVIATE_API_KEY, WEAVIATE_CLUSTER_URL, \
     DISCORD_TOKEN, DISCORD_GUILD_ID, TEST_GUILD_ID, TEST_MODE
@@ -38,6 +39,12 @@ class AramBot:
             self.open_ai_key,
             self.weaviate_api_key,
             self.weaviate_cluser_url
+        )
+        self.whitelist_command = WhitelistCommand(
+            self.logger,
+            self.test_mode,
+            self.test_guild_id,
+            version
         )
 
     def _create_log_file(self, guild_name):
@@ -85,6 +92,10 @@ class AramBot:
         @self.bot.command(name="query", help="Ask AramBot any question you like!")
         async def query(ctx, *args):
             await self.query_command.execute(ctx, args)
+
+        @self.bot.command(name="whitelist", help="Add a user to the whitelist for specific commands")
+        async def whitelist(ctx, *args):
+            await self.whitelist_command.execute(ctx, args)
 
         self.bot.run(self.discord_token)
 
