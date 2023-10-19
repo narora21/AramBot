@@ -1,8 +1,9 @@
 import json
 
 from .command import Command
+from .exceptions import UserException
 from .constants import USERNAME, PERMISSIONS, COMMANDS, ALLOW, DENY, \
-    COMMAND, LEVEL, ALL_LEVEL, LIMITED_LEVEL, NONE_LEVEL
+    COMMAND, LEVEL, ALL_LEVEL, LIMITED_LEVEL, NONE_LEVEL, LIMITS, NAME
 
 """
 Add a discord user to the whitelist to use a
@@ -20,7 +21,7 @@ class WhitelistCommand(Command):
         self.version = version
         super(WhitelistCommand, self).__init__(self.command_tps, logger, test_mode, test_guild_id)
     
-    async def _run_command_change(self, ctx, args):
+    async def _run_command_change(self, args):
         """
         args[0] - subcommand name
         args[1] - discord username
@@ -28,49 +29,50 @@ class WhitelistCommand(Command):
         args[3] - allow/deny (optional)
         """
         if len(args) < 3 or len(args) > 4:
-            await ctx.send(self.usage_str)
-            return
+            raise UserException(self.usage_str)
         username = args[1]
         command = args[2]
         allow = True
         if len(args) == 4:
             if args[3].lower() not in [ALLOW, DENY]:
-                error = f"Error: Option not recognized: {args[3]}, choose from [{ALLOW}, {DENY}]"
-                print(error)
-                self.logger.info(error)
-                await ctx.send(error)
-                return
+                error = f"Option not recognized: {args[3]}, choose from [{ALLOW}, {DENY}]"
+                print(f"UserException: {error}")
+                self.logger.info(f"UserException: {error}")
+                raise UserException(error)
             allow = args[3].lower() == ALLOW
         whitelist = None
         with open(self.whitelist_file_path, 'r') as whitelist_file:
             whitelist = json.loads(whitelist_file.read())
             for user in whitelist:
                 if user[USERNAME] == username:
-                    if allow and command not in user[COMMANDS]:
-                        user[COMMANDS].append(command)
-                    elif not allow and command in user[COMMANDS]:
-                        user[COMMANDS].remove(command)
+                    cmd_names = list(map(lambda cmd: cmd[NAME], user[COMMANDS]))
+                    if allow and command not in cmd_names:
+                        user[COMMANDS].append({NAME: command, LIMITS: {}})
+                    elif not allow and command in cmd_names:
+                        updated_cmds = []
+                        for cmd in user[COMMANDS]:
+                            if cmd[NAME] != command:
+                                updated_cmds.append(cmd)
+                        user[COMMANDS] = updated_cmds
                     break
         with open(self.whitelist_file_path, 'w') as whitelist_file:
             whitelist_file.write(json.dumps(whitelist))
     
-    async def _run_level_change(self, ctx, args):
+    async def _run_level_change(self, args):
         """
         args[0] - subcommand name
         args[1] - discord username
         args[2] - permission level
         """
         if len(args) != 3:
-            await ctx.send(self.usage_str)
-            return
+            raise UserException(self.usage_str)
         username = args[1]
         level = args[2]
         if level not in [ALL_LEVEL, LIMITED_LEVEL, NONE_LEVEL]:
-            error = f"Error: Option not recognized: {level}, choose from [{ALL_LEVEL},{LIMITED_LEVEL},{NONE_LEVEL}]"
-            print(error)
-            self.logger.info(error)
-            await ctx.send(error)
-            return
+            error = f"Option not recognized: {level}, choose from [{ALL_LEVEL},{LIMITED_LEVEL},{NONE_LEVEL}]"
+            print(f"UserException: {error}")
+            self.logger.info(f"UserException: {error}")
+            raise UserException(error)
         whitelist = None
         with open(self.whitelist_file_path, 'r') as whitelist_file:
             whitelist = json.loads(whitelist_file.read())
@@ -90,6 +92,6 @@ class WhitelistCommand(Command):
             await ctx.send(self.usage_str)
             return
         if subcommand == COMMAND:
-            await self._run_command_change(ctx, args) 
+            await self._run_command_change(args) 
         else:
-            await self._run_level_change(ctx, args)
+            await self._run_level_change(args)

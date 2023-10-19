@@ -1,1 +1,1 @@
-[{"username": "narora", "permissions": "all", "commands": []}]
+[{"username": "narora", "permissions": "all", "commands": [{"name": "query", "limits": {"dailyTransactions": 1000}}]}]

@@ -1,0 +1,123 @@
+2023-10-16 07:56:03,718 - __main__ - INFO - Running in test mode
+2023-10-16 07:56:03,718 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 07:59:48,655 - __main__ - INFO - Running in Test Mode
+2023-10-16 07:59:48,655 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:01:26,206 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:01:26,207 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:01:42,019 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:01:42,020 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:03:14,986 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:03:14,986 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:04:03,491 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:04:03,492 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:09:47,405 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:09:47,406 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:09:51,189 - __main__ - INFO - Received a <class 'commands.mmr.MMRCommand'> command with args: (('keldeones',),)
+2023-10-16 08:12:28,267 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:12:28,267 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:12:34,124 - __main__ - INFO - Received a MMRCommand command with args: (('keldeones', 'two'),)
+2023-10-16 08:24:19,167 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:24:19,167 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:24:21,881 - __main__ - INFO - Received a MMRCommand from narora in Aram Bot Test Server with args: (('keldeones',),)
+2023-10-16 08:26:44,206 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:26:44,206 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:26:44,840 - __main__ - INFO - Received a MMRCommand from narora in Aram Bot Test Server with args: (('keldeones',),)
+2023-10-16 08:31:27,127 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:31:27,127 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:31:31,055 - __main__ - INFO - Received a MMRCommand from narora in Aram Bot Test Server with args: (('keldeones',),)
+2023-10-16 08:33:34,035 - __main__ - INFO - Running in Test Mode
+2023-10-16 08:33:34,036 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 08:33:39,363 - __main__ - INFO - Received a MMRCommand from narora in Aram Bot Test Server with args: (('jake', 'uwuu'),)
+2023-10-16 09:21:13,738 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:21:13,738 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:21:20,223 - __main__ - INFO - Received a QueryCommand from narora in Aram Bot Test Server with args: ()
+2023-10-16 09:22:16,435 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:22:16,436 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:22:17,356 - __main__ - INFO - Received a QueryCommand from narora in Aram Bot Test Server with args: ()
+2023-10-16 09:27:18,941 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:27:18,942 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:27:20,842 - __main__ - INFO - Received a QueryCommand from narora in Aram Bot Test Server with args: ()
+2023-10-16 09:32:35,244 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:32:35,245 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:32:38,185 - __main__ - INFO - Received a QueryCommand from narora in Aram Bot Test Server with args: ()
+2023-10-16 09:33:49,155 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:33:49,156 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:33:50,824 - __main__ - INFO - Received a QueryCommand from narora in Aram Bot Test Server with args: ()
+2023-10-16 09:33:50,824 - __main__ - INFO - _run finished executing after 0.0 seconds
+2023-10-16 09:36:15,409 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:36:15,411 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:36:33,217 - __main__ - INFO - Received a QueryCommand from narora in Aram Bot Test Server with args: ()
+2023-10-16 09:36:33,217 - __main__ - INFO - _run finished executing after 0.0 seconds
+2023-10-16 09:47:49,765 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:47:49,766 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:47:51,170 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 09:47:51,170 - __main__ - INFO - Received a QueryCommand from narora in Aram Bot Test Server with args: ()
+2023-10-16 09:49:08,234 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:49:08,234 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:51:50,777 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:51:50,777 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:51:59,670 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 09:51:59,670 - __main__ - INFO - Received a WhitelistCommand from narora in Aram Bot Test Server with args: ('keldeones', 'query')
+2023-10-16 09:52:52,106 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:52:52,107 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:52:54,757 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 09:52:54,757 - __main__ - INFO - Received a WhitelistCommand from narora in Aram Bot Test Server with args: ('keldeones', 'query')
+2023-10-16 09:53:58,843 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:53:58,844 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:54:01,871 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 09:54:01,872 - __main__ - INFO - Received a WhitelistCommand from narora in Aram Bot Test Server with args: ('keldeones', 'query')
+2023-10-16 09:55:17,033 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:55:17,034 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:55:21,209 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 09:55:21,210 - __main__ - INFO - Received a WhitelistCommand from narora in Aram Bot Test Server with args: ('keldeones', 'query')
+2023-10-16 09:56:09,936 - __main__ - INFO - Running in Test Mode
+2023-10-16 09:56:09,936 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 09:56:12,881 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 09:56:12,881 - __main__ - INFO - Received a WhitelistCommand from narora in Aram Bot Test Server with args: ('keldeones', 'query')
+2023-10-16 20:26:52,153 - __main__ - INFO - Running in Test Mode
+2023-10-16 20:26:52,153 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 20:27:00,423 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 20:27:00,424 - __main__ - INFO - Received a query from narora in Aram Bot Test Server with args: ('keldeones', 'a')
+2023-10-16 20:27:00,424 - __main__ - ERROR - Could not load whitelist: [Errno 2] No such file or directory: 'C:\\Users\\naror\\OneDrive\\Documents\\GitHub\\AramBot\\data\\wihitelist.json'
+2023-10-16 20:33:10,009 - __main__ - INFO - Running in Test Mode
+2023-10-16 20:33:10,009 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 20:33:14,834 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 20:33:14,834 - __main__ - INFO - Received a query from narora in Aram Bot Test Server with args: ('keldeones', 'a')
+2023-10-16 21:06:50,618 - __main__ - INFO - Running in Test Mode
+2023-10-16 21:06:50,619 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 21:07:11,466 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 21:07:11,466 - __main__ - INFO - Received a query from narora in Aram Bot Test Server with args: ('keldeones', 'a')
+2023-10-16 22:47:44,845 - __main__ - INFO - Running in Test Mode
+2023-10-16 22:47:44,845 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 22:48:01,879 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 22:48:01,879 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('bob', 'mmr', 'allow')
+2023-10-16 22:48:01,883 - __main__ - ERROR - An error ocurred while running the command: Expecting value: line 1 column 1 (char 0)
+2023-10-16 22:51:17,874 - __main__ - INFO - Running in Test Mode
+2023-10-16 22:51:17,874 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 22:51:21,099 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 22:51:21,100 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('bob', 'mmr', 'allow')
+2023-10-16 22:51:21,101 - __main__ - ERROR - An error ocurred while running the command: Expecting value: line 1 column 1 (char 0)
+2023-10-16 22:51:58,480 - __main__ - INFO - Running in Test Mode
+2023-10-16 22:51:58,481 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-16 22:52:01,793 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 22:52:01,794 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('bob', 'mmr', 'allow')
+2023-10-16 22:52:25,053 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-16 22:52:25,053 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('bob', 'mmr', 'deny')
+2023-10-17 01:34:38,360 - __main__ - INFO - Running in Test Mode
+2023-10-17 01:34:38,361 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-17 01:34:44,436 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-17 01:34:44,437 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('bob', 'mmr', 'deny')
+2023-10-17 01:34:55,786 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-17 01:34:55,786 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('command', 'bob', 'mmr', 'deny')
+2023-10-17 01:35:50,196 - __main__ - INFO - Running in Test Mode
+2023-10-17 01:35:50,197 - __main__ - INFO - AramBot#7788 is connected to server Aram Bot Test Server (id:924870603360579596)
+2023-10-17 01:35:51,609 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-17 01:35:51,609 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('command', 'bob', 'mmr', 'deny')
+2023-10-17 01:36:00,279 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-17 01:36:00,280 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('command', 'bob', 'mmr', 'allow')
+2023-10-17 01:36:08,801 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-17 01:36:08,801 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('command', 'bob', 'mmr', 'deny')
+2023-10-17 01:36:16,529 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-17 01:36:16,529 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('command', 'bob', 'mmr')
+2023-10-17 01:36:33,398 - __main__ - INFO - execute finished executing after 0.0 seconds
+2023-10-17 01:36:33,398 - __main__ - INFO - Received a whitelist from narora in Aram Bot Test Server with args: ('level', 'bob', 'none')

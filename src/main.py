@@ -3,6 +3,7 @@
 import discord
 import logging
 import os
+import openai
 from pathlib import Path
 from logging.handlers import TimedRotatingFileHandler
 from dotenv import dotenv_values
@@ -21,6 +22,7 @@ class AramBot:
         self.bot = commands.Bot(command_prefix='!', intents=discord.Intents.all())
         self.test_mode = config[TEST_MODE] == '1'
         self.open_ai_key = config[OPEN_AI_KEY]
+        openai.api_key = config[OPEN_AI_KEY]
         self.weaviate_api_key = config[WEAVIATE_API_KEY]
         self.weaviate_cluser_url = config[WEAVIATE_CLUSTER_URL]
         self.discord_token = config[DISCORD_TOKEN]
@@ -51,9 +53,9 @@ class AramBot:
         """Creates a log file in /logs/<guild_name>/runtime.log
         Returns this path if succesful
         """
-        log_path = os.path.join('logs', self.guild.name)
+        log_path = os.path.join('logs', guild_name)
         Path(log_path).mkdir(parents=True, exist_ok=True)
-        log_filepath = os.path.join('logs', self.guild.name, 'runtime.log')        
+        log_filepath = os.path.join('logs', guild_name, 'runtime.log')        
         if not os.path.isfile(log_filepath):
             open(os.path.join(os.getcwd(), log_filepath), 'x').close()
         return log_filepath
