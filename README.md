@@ -16,3 +16,8 @@ The supported commands are:
 !build {champion} {queue-type (default: aram)} (only aram implemented)
 - returns the recommended ARAM build of the champion
 
+## Setup
+To run aram bot simply run:
+```
+python3 src/main.py
+```
